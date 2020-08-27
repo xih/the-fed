@@ -4,6 +4,7 @@ import Homepage from './Homepage'
 import { Route, Switch } from 'react-router'
 import LoginPage from './LoginPage'
 import SignupPage from './SignupPage'
+import PlaidLinkPage from './PlaidLinkPage';
 
 function App() {
   return (
@@ -12,6 +13,7 @@ function App() {
         <Route exact path="/" component={Homepage} />
         <Route path='/login' component={LoginPage} />
         <Route path='/signup' component={SignupPage} />
+        <Route path='/plaidlink' component={PlaidLinkPage} />
       </Switch>
     </>
   );
