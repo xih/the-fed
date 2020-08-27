@@ -4,28 +4,31 @@ import Navbar from '../components/Navbar'
 import { push } from 'connected-react-router'
 import { stubObject } from 'lodash'
 import { connect } from 'react-redux'
-
+import { Container } from 'react-bootstrap'
 
 const Homepage = ({ push }) => {
-  console.log(push)
   return (
     <div>
       <Navbar />
-      <br/>
-      <Button 
-        onClick={() => {
-          push('/login')
-        }}
-
-        variant="primary">Log in </Button>{' '}
-      <Button variant="secondary">Sign up</Button>{' '}
+      <Container>
+        <br />
+        <Button
+          onClick={() => {
+            push('/login')
+          }}
+          variant="primary">Log in </Button>{' '}
+        <Button
+          onClick={() => {
+            push('/signup')
+          }}
+          variant="secondary">Sign up</Button>{' '}
+      </Container>
     </div>
   );
 };
 
 const mapDispatchToProps = (dispatch) => ({
   push: (url) => dispatch(push(url))
-
 })
 
 export default connect(
