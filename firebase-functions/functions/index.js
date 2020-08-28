@@ -10,7 +10,6 @@ const plaidClient = new plaid.Client({
   env: plaid.environments.sandbox
 });
 
-
 exports.createPlaidLinkToken = functions.https.onCall(async (data, context) => {
   const { uid } = data
   try {
