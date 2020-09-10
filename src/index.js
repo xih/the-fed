@@ -10,7 +10,10 @@ import App from './App';
 import { PersistGate } from 'redux-persist/integration/react'
 import createStore from './Stores'
 
+import { createAsyncAction } from './utils'
+
 const { store, persistor } = createStore()
+
 
 ReactDOM.render(
   <React.StrictMode>

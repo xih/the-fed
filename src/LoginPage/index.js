@@ -1,28 +1,88 @@
 import React from 'react';
 import { Form, Button, Container } from 'react-bootstrap'
 import Navbar from '../components/Navbar'
+import { connect } from 'react-redux'
+// import { UserAsyncActions, UserAsyncTypes } from 'App/Stores/User/Actions';
+import { UserAsyncActions, UserAsyncTypes } from '../Stores/User/Actions';
+import { useFormik } from 'formik'
+import * as Yup from 'yup';
 
-const LoginPage = () => {
+const LoginPage = ({ doLogin, errorMsg }) => {
+  const formik = useFormik({
+    initialValues: {
+      email: '',
+      password: '',
+    },
+    validationSchema: Yup.object({
+      email: Yup.string()
+        .email('Invalid email address')
+        .required('Required'),
+      password: Yup.string()
+        .min(8, 'Must be 8 characters or more')
+        .required()
+    }),
+    onSubmit: values => {
+      alert(JSON.stringify(values, null, 2));
+    },
+  });
+
+
   return (
     <>
       <Navbar />
-      <br/>
+      <br />
       <Container>
-        <Form>
-          <Form.Group controlId="formBasicEmail">
+        <Form onSubmit={formik.handleSubmit}>
+          <Form.Group controlId="email">
             <Form.Label>Email address</Form.Label>
-            <Form.Control type="email" placeholder="Enter email" />
-            <Form.Text className="text-muted">
-              We'll never share your email with anyone else.
-          </Form.Text>
+            <Form.Control
+              name='email'
+              type="email"
+              placeholder="Enter email"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values.email}
+              // isValid={formik.touched.email && !formik.errors.email}
+              isInvalid={formik.touched.email && formik.errors.email}
+            />
+            {formik.touched.email && formik.errors.email ? (
+              <Form.Control.Feedback type='invalid'>
+                {formik.errors.email}
+              </Form.Control.Feedback>
+            ) : <Form.Text className="text-muted">
+                We'll never share your email with anyone else.
+          </Form.Text>}
           </Form.Group>
 
-          <Form.Group controlId="formBasicPassword">
+
+          {/* {console.log('whats the error msg', errorMsg)} */}
+          {/* {console.log('whats the formik errors emaild', formik.errors.email)} */}
+          {/* {console.log('touced', formik.touched.email)} */}
+
+          <Form.Group controlId="password">
             <Form.Label>Password</Form.Label>
-            <Form.Control type="password" placeholder="Password" />
+            <Form.Control
+              name='password'
+              type="password"
+              placeholder="Password"
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              value={formik.values.password}
+              isInvalid={formik.touched.password && formik.errors.password}
+            />
+            {formik.touched.password && formik.errors.password ? (
+              <Form.Control.Feedback type='invalid'>
+                {formik.errors.password}
+              </Form.Control.Feedback>
+            ) : null}
           </Form.Group>
-          
-          <Button variant="primary" type="submit">
+
+          <Button
+            onClick={(e) => {
+              e.preventDefault()
+              doLogin(formik.values.email, formik.values.password)
+            }}
+            variant="primary" type="submit">
             Submit
           </Button>
         </Form>
@@ -31,4 +91,12 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+const mapStateToProps = (state) => ({
+  errorMsg: state.user.errors[UserAsyncTypes.LOGIN],
+})
+
+const mapDispatchToProps = (dispatch) => ({
+  doLogin: (email, password) => dispatch(UserAsyncActions.login({ email, password }))
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(LoginPage);
