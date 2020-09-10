@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { connect } from 'react-redux'
 import { Form, Button, Container, Col } from 'react-bootstrap'
-import Navbar from '../components/Navbar'
-import { auth } from '../Firebase/firebase.utils'
+import Navbar from '../../components/Navbar'
+import { auth } from '../../Firebase/firebase.utils'
 import { push } from 'connected-react-router'
 
 const SignupPage = () => {
@@ -10,7 +10,6 @@ const SignupPage = () => {
   const [firstName, setfirstName] = useState('')
   const [lastName, setlastName] = useState('')
   const [password, setPassword] = useState('')
-
 
   const handleSubmit = async (e) => {
     e.preventDefault()

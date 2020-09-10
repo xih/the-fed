@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux'
 import './App.css';
-import Homepage from './Homepage'
+import Homepage from './Routes/Homepage'
 import { Route, Switch } from 'react-router'
-import LoginPage from './LoginPage'
-import SignupPage from './SignupPage'
-import PlaidLinkPage from './PlaidLinkPage';
+import LoginPage from './Routes/LoginPage'
+import SignupPage from './Routes/SignupPage'
+import PlaidLinkPage from './Routes/PlaidLinkPage';
 import { StartupAsyncActions, StartupAsyncTypes } from './Stores/Startup/Actions';
 
 

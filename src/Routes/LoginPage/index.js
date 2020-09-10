@@ -1,9 +1,9 @@
 import React from 'react';
 import { Form, Button, Container } from 'react-bootstrap'
-import Navbar from '../components/Navbar'
+import Navbar from '../../components/Navbar'
 import { connect } from 'react-redux'
 // import { UserAsyncActions, UserAsyncTypes } from 'App/Stores/User/Actions';
-import { UserAsyncActions, UserAsyncTypes } from '../Stores/User/Actions';
+import { UserAsyncActions, UserAsyncTypes } from '../../Stores/User/Actions';
 import { useFormik } from 'formik'
 import * as Yup from 'yup';
 

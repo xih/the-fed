@@ -1,6 +1,6 @@
 import React from 'react';
 import Button from 'react-bootstrap/Button';
-import Navbar from '../components/Navbar'
+import Navbar from '../../components/Navbar'
 import { push } from 'connected-react-router'
 import { stubObject } from 'lodash'
 import { connect } from 'react-redux'
