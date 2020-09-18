@@ -1,21 +1,18 @@
+import { put, call, all, take, takeLatest } from "redux-saga/effects"
+import { getErrorMsg } from "../utils"
 import {
-  put, call, all, take, takeLatest
-} from 'redux-saga/effects'
-import { getErrorMsg } from '../utils'
-import { StartupAsyncActions, StartupAsyncTypes } from '../Stores/Startup/Actions';
+  StartupAsyncActions,
+  StartupAsyncTypes,
+} from "../Stores/Startup/Actions"
 
 export function* startup() {
   yield put(StartupAsyncActions.startupLoading())
 
   try {
-    console.log('hello')
     yield put(StartupAsyncActions.startupSuccess())
-
-
-
   } catch (e) {
-    const errorMsg = getErrorMsg(e);
-    yield put(StartupAsyncActions.startupFailure({ message: errorMsg }));
+    const errorMsg = getErrorMsg(e)
+    yield put(StartupAsyncActions.startupFailure({ message: errorMsg }))
   }
 }
 

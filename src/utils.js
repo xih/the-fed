@@ -1,6 +1,6 @@
-import { createActions, createReducer as _createReducer } from 'reduxsauce'
-import { put, race, take } from 'redux-saga/effects'
-import { replace } from 'lodash'
+import { createActions, createReducer as _createReducer } from "reduxsauce"
+import { put, race, take } from "redux-saga/effects"
+import { replace } from "lodash"
 
 export const createReducer = (state, reducerObj) => {
   const initialState = {
@@ -11,37 +11,26 @@ export const createReducer = (state, reducerObj) => {
   return _createReducer(initialState, reducerObj)
 }
 
-
 export const createAsyncAction = (actionName) => {
   const { Types: ParentTypes, Creators: ParentCreators } = createActions({
-    [actionName]: ['payload'],
+    [actionName]: ["payload"],
   })
 
-  console.log('types', ParentTypes)
-  console.log('Creators', ParentCreators)
   const familyType = Object.values(ParentTypes)[0]
   const parentCreator = Object.values(ParentCreators)[0]
   const wrappedParentCreator = (...args) => {
     const action = parentCreator(...args)
     return {
       ...action,
-      familyType
+      familyType,
     }
   }
 
-  console.log('what is the wrapped parentCreators', wrappedParentCreator)
-  console.log('parentCreator', parentCreator)
-
   const { Types: ChildTypes, Creators: ChildCreators } = createActions({
     [`${actionName}Loading`]: null,
-    [`${actionName}Success`]: ['payload'],
-    [`${actionName}Failure`]: ['error'],
+    [`${actionName}Success`]: ["payload"],
+    [`${actionName}Failure`]: ["error"],
   })
-
-
-  console.log('childtypes', ChildTypes)
-  console.log('ChildCreators', ChildCreators)
-
 
   const wrappedChildCreators = {}
   Object.entries(ChildCreators).forEach(([key, childCreator]) => {
@@ -49,7 +38,7 @@ export const createAsyncAction = (actionName) => {
       const action = childCreator(...args)
       return {
         ...action,
-        familyType
+        familyType,
       }
     }
   })
@@ -62,30 +51,30 @@ export const createAsyncAction = (actionName) => {
     AsyncCreators: {
       [actionName]: wrappedParentCreator,
       ...wrappedChildCreators,
-    }
+    },
   }
 }
 
-console.log('hello~$~~~~', createAsyncAction('fetchProfile'))
-
-
-export const createManyAsyncActions = (asyncActionName) => (
-  asyncActionName.reduce((data, name) => {
-    const { AsyncTypes: _AsyncTypes, AsyncCreators: _AsyncCreators } = createAsyncAction(name)
-    return {
-      AsyncTypes: {
-        ...data.AsyncTypes,
-        ..._AsyncTypes,
-      }, 
-      AsyncCreators: {
-        ...data.AsyncCreators,
-        ..._AsyncCreators,
+export const createManyAsyncActions = (asyncActionName) =>
+  asyncActionName.reduce(
+    (data, name) => {
+      const {
+        AsyncTypes: _AsyncTypes,
+        AsyncCreators: _AsyncCreators,
+      } = createAsyncAction(name)
+      return {
+        AsyncTypes: {
+          ...data.AsyncTypes,
+          ..._AsyncTypes,
+        },
+        AsyncCreators: {
+          ...data.AsyncCreators,
+          ..._AsyncCreators,
+        },
       }
-    }
-
-  }, { AsyncTypes: {}, AsyncCreators: {} })
-)
-
+    },
+    { AsyncTypes: {}, AsyncCreators: {} }
+  )
 
 const loadingReducer = (state, { familyType }) => ({
   ...state,
@@ -96,7 +85,7 @@ const loadingReducer = (state, { familyType }) => ({
   errors: {
     ...state.errors,
     [familyType]: null,
-  }
+  },
 })
 
 const successReducer = (state, { familyType }) => ({
@@ -107,8 +96,8 @@ const successReducer = (state, { familyType }) => ({
   },
   errors: {
     ...state.errors,
-    [familyType]: null
-  }
+    [familyType]: null,
+  },
 })
 
 const failureReducer = (state, { error, familyType }) => ({
@@ -119,8 +108,8 @@ const failureReducer = (state, { error, familyType }) => ({
   },
   errors: {
     ...state.errors,
-    [familyType]: error.message
-  }
+    [familyType]: error.message,
+  },
 })
 
 /**
@@ -149,11 +138,11 @@ const failureReducer = (state, { error, familyType }) => ({
 export const createAsyncReducers = (asyncActionTypes) => {
   return asyncActionTypes.reduce((reducerObj, actionType) => {
     const _actionType = actionType.toLowerCase()
-    if (_actionType.indexOf('_loading') > -1 ) {
+    if (_actionType.indexOf("_loading") > -1) {
       reducerObj[actionType] = loadingReducer
-    } else if (_actionType.indexOf('_success') > -1 ) {
+    } else if (_actionType.indexOf("_success") > -1) {
       reducerObj[actionType] = successReducer
-    } else if (_actionType.indexOf('_failure') > -1) {
+    } else if (_actionType.indexOf("_failure") > -1) {
       reducerObj[actionType] = failureReducer
     }
     return reducerObj
@@ -161,6 +150,36 @@ export const createAsyncReducers = (asyncActionTypes) => {
 }
 
 export const getErrorMsg = (e) => {
-  const errorMsg = e.message.split(`[${e.code}]`)[1] || '';
+  const errorMsg = e.message.split(`[${e.code}]`)[1] || ""
   return errorMsg.trim() || e.message
+}
+
+export const generateEntity = (id, data) => ({ [id]: { ...data, id } })
+
+export const setEntities = (state, { entities }) => ({
+  ...state,
+  entities: {
+    ...state.entities,
+    ...entities,
+  },
+})
+
+/**
+ * Utility saga for bubbling up errors from other sagas
+ * Instead of using `yield take`, use this saga to wait for an async action response
+ * If the async action responds with a failure, the error will be rethrown
+ */
+export function* waitForResponse(AsyncTypes, action) {
+  yield put(action)
+  const familyType = action.type
+  const SUCCESS_ACTION = AsyncTypes[`${familyType}_SUCCESS`]
+  const FAILURE_ACTION = AsyncTypes[`${familyType}_FAILURE`]
+  const { failure } = yield race({
+    success: take(SUCCESS_ACTION),
+    failure: take(FAILURE_ACTION),
+  })
+
+  if (failure) {
+    throw new Error(failure.error.message)
+  }
 }

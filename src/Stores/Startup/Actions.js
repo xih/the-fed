@@ -1,10 +1,5 @@
-import { createManyAsyncActions } from '../../utils'
+import { createManyAsyncActions } from "../../utils"
 
-const {AsyncTypes, AsyncCreators } = createManyAsyncActions([
-  'startup'
-])
+const { AsyncTypes, AsyncCreators } = createManyAsyncActions(["startup"])
 
-export {
-  AsyncTypes as StartupAsyncTypes,
-  AsyncCreators as StartupAsyncActions
-}
+export { AsyncTypes as StartupAsyncTypes, AsyncCreators as StartupAsyncActions }

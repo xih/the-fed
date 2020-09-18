@@ -1,12 +1,12 @@
-import React from 'react';
-import Button from 'react-bootstrap/Button';
-import Navbar from '../../components/Navbar'
-import { push } from 'connected-react-router'
-import { stubObject } from 'lodash'
-import { connect } from 'react-redux'
-import { Container } from 'react-bootstrap'
+import React from "react"
+import Button from "react-bootstrap/Button"
+import { push } from "connected-react-router"
+import { stubObject } from "lodash"
+import { connect } from "react-redux"
+import { Container } from "react-bootstrap"
+import Navbar from "../../components/Navbar"
 
-const Homepage = ({ push }) => {
+const Homepage = ({ pushUrl }) => {
   return (
     <div>
       <Navbar />
@@ -14,24 +14,27 @@ const Homepage = ({ push }) => {
         <br />
         <Button
           onClick={() => {
-            push('/login')
+            pushUrl("/login")
           }}
-          variant="primary">Log in </Button>{' '}
+          variant="primary"
+        >
+          Log in{" "}
+        </Button>{" "}
         <Button
           onClick={() => {
-            push('/signup')
+            pushUrl("/signup")
           }}
-          variant="secondary">Sign up</Button>{' '}
+          variant="secondary"
+        >
+          Sign up
+        </Button>{" "}
       </Container>
     </div>
-  );
-};
+  )
+}
 
 const mapDispatchToProps = (dispatch) => ({
-  push: (url) => dispatch(push(url))
+  pushUrl: (url) => dispatch(push(url)),
 })
 
-export default connect(
-  stubObject,
-  mapDispatchToProps
-)(Homepage);
+export default connect(stubObject, mapDispatchToProps)(Homepage)

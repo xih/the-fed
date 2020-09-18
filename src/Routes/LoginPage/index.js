@@ -1,31 +1,26 @@
-import React from 'react';
-import { Form, Button, Container } from 'react-bootstrap'
-import Navbar from '../../components/Navbar'
-import { connect } from 'react-redux'
+import React from "react"
+import { Form, Button, Container } from "react-bootstrap"
+import { connect } from "react-redux"
 // import { UserAsyncActions, UserAsyncTypes } from 'App/Stores/User/Actions';
-import { UserAsyncActions, UserAsyncTypes } from '../../Stores/User/Actions';
-import { useFormik } from 'formik'
-import * as Yup from 'yup';
+import { useFormik } from "formik"
+import * as Yup from "yup"
+import { UserAsyncActions, UserAsyncTypes } from "../../Stores/User/Actions"
+import Navbar from "../../components/Navbar"
 
 const LoginPage = ({ doLogin, errorMsg }) => {
   const formik = useFormik({
     initialValues: {
-      email: '',
-      password: '',
+      email: "",
+      password: "",
     },
     validationSchema: Yup.object({
-      email: Yup.string()
-        .email('Invalid email address')
-        .required('Required'),
-      password: Yup.string()
-        .min(8, 'Must be 8 characters or more')
-        .required()
+      email: Yup.string().email("Invalid email address").required("Required"),
+      password: Yup.string().min(8, "Must be 8 characters or more").required(),
     }),
-    onSubmit: values => {
-      alert(JSON.stringify(values, null, 2));
+    onSubmit: (values) => {
+      alert(JSON.stringify(values, null, 2))
     },
-  });
-
+  })
 
   return (
     <>
@@ -36,7 +31,7 @@ const LoginPage = ({ doLogin, errorMsg }) => {
           <Form.Group controlId="email">
             <Form.Label>Email address</Form.Label>
             <Form.Control
-              name='email'
+              name="email"
               type="email"
               placeholder="Enter email"
               onChange={formik.handleChange}
@@ -46,23 +41,20 @@ const LoginPage = ({ doLogin, errorMsg }) => {
               isInvalid={formik.touched.email && formik.errors.email}
             />
             {formik.touched.email && formik.errors.email ? (
-              <Form.Control.Feedback type='invalid'>
-                {formik.errors.email}
+              <Form.Control.Feedback type="invalid">
+                {formik.errors.email || errorMsg}
               </Form.Control.Feedback>
-            ) : <Form.Text className="text-muted">
-                We'll never share your email with anyone else.
-          </Form.Text>}
+            ) : (
+              <Form.Text className="text-muted">
+                We will never share your email with anyone else.
+              </Form.Text>
+            )}
           </Form.Group>
-
-
-          {/* {console.log('whats the error msg', errorMsg)} */}
-          {/* {console.log('whats the formik errors emaild', formik.errors.email)} */}
-          {/* {console.log('touced', formik.touched.email)} */}
 
           <Form.Group controlId="password">
             <Form.Label>Password</Form.Label>
             <Form.Control
-              name='password'
+              name="password"
               type="password"
               placeholder="Password"
               onChange={formik.handleChange}
@@ -71,7 +63,7 @@ const LoginPage = ({ doLogin, errorMsg }) => {
               isInvalid={formik.touched.password && formik.errors.password}
             />
             {formik.touched.password && formik.errors.password ? (
-              <Form.Control.Feedback type='invalid'>
+              <Form.Control.Feedback type="invalid">
                 {formik.errors.password}
               </Form.Control.Feedback>
             ) : null}
@@ -82,21 +74,24 @@ const LoginPage = ({ doLogin, errorMsg }) => {
               e.preventDefault()
               doLogin(formik.values.email, formik.values.password)
             }}
-            variant="primary" type="submit">
+            variant="primary"
+            type="submit"
+          >
             Submit
           </Button>
         </Form>
       </Container>
     </>
-  );
-};
+  )
+}
 
 const mapStateToProps = (state) => ({
   errorMsg: state.user.errors[UserAsyncTypes.LOGIN],
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  doLogin: (email, password) => dispatch(UserAsyncActions.login({ email, password }))
+  doLogin: (email, password) =>
+    dispatch(UserAsyncActions.login({ email, password })),
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(LoginPage);
+export default connect(mapStateToProps, mapDispatchToProps)(LoginPage)

@@ -1,19 +1,23 @@
-import { createActions } from 'reduxsauce'
-import { createManyAsyncActions } from '../../utils.js'
+import { createActions } from "reduxsauce"
+import { createManyAsyncActions } from "../../utils.js"
 
 const { Types, Creators } = createActions({
-  setFirebaseData: ["userData"]
+  setFirebaseUserData: ["userData"],
+  setUserEntities: ["entities"],
 })
 
+// TYPE - SET_FIREBASE_USER_DATA,
+// Creators = parameters - { type: SET_FIREBASE_USER_DATA, userData: {}}
+
 const { AsyncTypes, AsyncCreators } = createManyAsyncActions([
-  'login',
-  'signup'
+  "login",
+  "signup",
+  "fetchProfile",
 ])
 
 export {
   Types as UserTypes,
   AsyncTypes as UserAsyncTypes,
   Creators as UserActions,
-  AsyncCreators as UserAsyncActions
+  AsyncCreators as UserAsyncActions,
 }
-
