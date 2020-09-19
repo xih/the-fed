@@ -53,8 +53,9 @@ exports.exchangePublicToken = functions.https.onCall(async (data, context) => {
 
     // user document would have an array of itemIds and accessTokens
     const newFinancialInstitutionPayload = {
-      accessToken: access_token,
-      itemId: item_id,
+      item_id: {
+        accessToken: access_token,
+      }
     }
 
     const userDoc = firestore.collection('USERS').doc(String(userId))
@@ -67,6 +68,50 @@ exports.exchangePublicToken = functions.https.onCall(async (data, context) => {
       itemId: item_id
     }
   } catch(e) {
+    console.log('error', e)
+  }
+})
+
+exports.addFinancialAccounts = functions.https.onCall(async (data, context) => {
+  const { userId } = data
+
+  try {
+    const userRef = firestore.collection('USERS').doc(String(userId))
+    const userDoc = await userRef.get()
+    const userData = userDoc.data()
+
+    const accessToken = userData.financialInstitutions[0].access_token // this will break in the future
+    // either use this that's stored on the database or use it from the accountResponse
+    const financialInstitutionId = userData.financialInstitutions[0].item_id // this will break in the future
+
+    let accountResponse = await plaidClient.getAccounts(accessToken)
+
+    const { accounts, item } = accountResponse
+    const financialInstitutionId2 = item.item_id
+
+
+    // put all the accounts in a ACCOUNTS collection referenced by userID
+    const batch = firestore.batch()
+    const financialAccountsRef = firestore.collection('FINANCIAL_ACCOUNTS')
+
+    accounts.forEach(account => {
+      const accountData = {
+        ...account,
+        userId,
+        financialInstitutionId2,
+      }
+
+      const newDoc = financialAccountsRef.doc()
+      batch.set(newDoc, accountData)
+    })
+
+    batch.commit()
+    console.log('added all accounts complete!')
+
+    return {
+      accounts: 'hi'
+    }
+  } catch (e) {
     console.log('error', e)
   }
 })

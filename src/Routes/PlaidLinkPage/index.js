@@ -6,7 +6,7 @@ import { Button } from 'react-bootstrap'
 // import { getUserId } from '../../Stores/User/Selectors'
 import { getLinkToken } from '../../Stores/Plaid/Selectors'
 
-const PlaidLinkPage = ({ createPlaidLinkToken, userId, linkToken, exchangePublicToken, addFinancialInstitution }) => {
+const PlaidLinkPage = ({ createPlaidLinkToken, userId, linkToken, exchangePublicToken, addAllAccountsForOneFinancialInstitution }) => {
 
   console.log('linkToken', linkToken)
 
@@ -14,8 +14,8 @@ const PlaidLinkPage = ({ createPlaidLinkToken, userId, linkToken, exchangePublic
     (token, metadata) => {
       console.log("onSuccess", token, metadata)
       exchangePublicToken(token, metadata)
-      addFinancialInstitution()
-    }, [addFinancialInstitution, exchangePublicToken]
+      addAllAccountsForOneFinancialInstitution()
+    }, [addAllAccountsForOneFinancialInstitution, exchangePublicToken]
   )
 
   const onEvent = useCallback(
@@ -42,17 +42,22 @@ const PlaidLinkPage = ({ createPlaidLinkToken, userId, linkToken, exchangePublic
   return (
     <div>
       {
-        ready? open() : null
+        ready ? open() : null
       }
 
       <Button
         onClick={() => createPlaidLinkToken(userId)}>
-          Create Plaid Link Token TEST
+        Create Plaid Link Token TEST
       </Button>
       <Button
         disabled={!ready || error}
         onClick={() => open()}>
         Open plaid link
+      </Button>
+      <Button
+        onClick={() => addAllAccountsForOneFinancialInstitution()}
+      >
+        addAllAccountsForOneFinancialInstitution
       </Button>
     </div>
   )
@@ -66,7 +71,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = (dispatch) => ({
   createPlaidLinkToken: (userId) => dispatch(PlaidAsyncActions.createPlaidLinkToken({ userId })),
   exchangePublicToken: (token, metadata) => dispatch(PlaidAsyncActions.exchangePublicToken({ token, metadata })),
-  addFinancialInstitution: () => dispatch(PlaidAsyncActions.addFinancialInstitution())
+  addAllAccountsForOneFinancialInstitution: () => dispatch(PlaidAsyncActions.addAllAccountsForOneFinancialInstitution())
 })
 
 export default connect(

@@ -39,32 +39,14 @@ export function* exchangePublicToken({ payload }) {
 
   try {
     const { token, metadata } = payload
-    const { public_token, institution, accounts, account, account_id, link_session_id } = metadata
+
+    // yield call(ApiService.add, addFinancialInstitutionPayload)
+    // TODO: update the user schema to add a reference to the financialInstitutionID
 
 
     // each user should have an accounts array to it
     // and also just store all the data into firebase straight away
     const userId = yield select(getUserId)
-
-    // const fullInstitutionData = {
-    //   institutionName: institution.name,
-    //   accounts,
-    //   account,
-    //   account_id,
-    //   link_session_id,
-    //   public_token,
-    //   userId: userId,
-    // }
-
-    // const addFinancialInstitutionPayload = {
-    //   collectionName: ApiService.COLLECTION_NAMES.FINANCIAL_INSTITUTIONS,
-    //   // id: institution.institution_id,
-    //   data: fullInstitutionData
-    // }
-
-
-    // yield call(ApiService.add, addFinancialInstitutionPayload)
-    // TODO: update the user schema to add a reference to the financialInstitutionID
 
     const response = yield call([axios, axios.post],
       "http://localhost:5001/flames-4cfe9/us-central1/exchangePublicToken", { // hardcoding firebase functions for emulator
@@ -82,17 +64,41 @@ export function* exchangePublicToken({ payload }) {
   }
 }
 
-export function* addFinancialInstitution({ payload }) {
-  yield put(PlaidAsyncActions.addFinancialInstitutionLoading())
+export function* addAllAccountsForOneFinancialInstitution({ payload }) {
+  yield put(PlaidAsyncActions.addAllAccountsForOneFinancialInstitutionLoading())
   try {
-    const userId = select(getUserId)
-    console.log('add financialInstitution', userId)
+    // const { metadata } = payload
+    const userId = yield select(getUserId)
+    // console.log('add financialInstitution', userId)
 
-    yield put(PlaidAsyncActions.addFinancialInstitutionSuccess()) 
+
+    // TODO: store all this metadata into redux
+    // const { public_token, institution, accounts, account, account_id, link_session_id } = metadata
+
+    // const fullInstitutionData = {
+    //   institutionName: institution.name,
+    //   institutionId: institution.institution_id,
+    //   accounts,
+    //   account,
+    //   account_id,
+    //   link_session_id,
+    //   public_token,
+    //   userId: userId,
+    // }
+
+
+    const response = yield call([axios, axios.post],
+      "http://localhost:5001/flames-4cfe9/us-central1/addFinancialAccounts", { // hardcoding firebase functions for emulator
+      data: {
+        userId: userId
+      }
+    })
+    
+    yield put(PlaidAsyncActions.addAllAccountsForOneFinancialInstitutionSuccess())
 
   } catch (e) {
     const errorMsg = getErrorMsg(e)
-    yield put(PlaidAsyncActions.addFinancialInstitutionFailure({ message: errorMsg }))
+    yield put(PlaidAsyncActions.addAllAccountsForOneFinancialInstitutionFailure({ message: errorMsg }))
   }
 }
 
@@ -100,6 +106,6 @@ export default function* rootPlaidSaga() {
   yield all([
     takeLatest(PlaidAsyncTypes.CREATE_PLAID_LINK_TOKEN, createPlaidLinkToken),
     takeLatest(PlaidAsyncTypes.EXCHANGE_PUBLIC_TOKEN, exchangePublicToken),
-    takeLatest(PlaidAsyncTypes.ADD_FINANCIAL_INSTITUTION, addFinancialInstitution),
+    takeLatest(PlaidAsyncTypes.ADD_ALL_ACCOUNTS_FOR_ONE_FINANCIAL_INSTITUTION, addAllAccountsForOneFinancialInstitution),
   ])
 }

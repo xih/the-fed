@@ -3,12 +3,13 @@ import { createManyAsyncActions } from "../../utils"
 
 const { Types, Creators } = createActions({
   setLinkToken: ['linkToken'],
+  setFinancialInstitutionAndAccounts: ['financialData'],
 })
 
 const { AsyncTypes, AsyncCreators } = createManyAsyncActions([
   "createPlaidLinkToken",
   'exchangePublicToken',
-  'addFinancialInstitution'
+  'addAllAccountsForOneFinancialInstitution'
 ])
 
 export {
