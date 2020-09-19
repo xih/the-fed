@@ -1,19 +1,21 @@
 import React, { useCallback, useEffect, useState } from "react"
-import axios from "axios"
 import { connect } from 'react-redux'
 import { usePlaidLink } from "react-plaid-link"
 import { PlaidAsyncActions, PlaidAsyncTypes } from '../../Stores/Plaid/Actions'
 import { Button } from 'react-bootstrap'
-import { getUserId } from '../../Stores/User/Selectors'
+// import { getUserId } from '../../Stores/User/Selectors'
 import { getLinkToken } from '../../Stores/Plaid/Selectors'
 
-const PlaidLinkPage = ({ createPlaidLinkToken, userId, linkToken }) => {
+const PlaidLinkPage = ({ createPlaidLinkToken, userId, linkToken, exchangePublicToken, addFinancialInstitution }) => {
 
   console.log('linkToken', linkToken)
 
   const onSuccess = useCallback(
-    (token, metadata) => console.log("onSuccess", token, metadata),
-    []
+    (token, metadata) => {
+      console.log("onSuccess", token, metadata)
+      exchangePublicToken(token, metadata)
+      addFinancialInstitution()
+    }, [addFinancialInstitution, exchangePublicToken]
   )
 
   const onEvent = useCallback(
@@ -57,13 +59,14 @@ const PlaidLinkPage = ({ createPlaidLinkToken, userId, linkToken }) => {
 }
 
 const mapStateToProps = state => ({
-  userId: getUserId(state),
   errorMsg: state.plaid.errors[PlaidAsyncTypes.CREATE_PLAID_LINK_TOKEN],
   linkToken: getLinkToken(state)
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  createPlaidLinkToken: (userId) => dispatch(PlaidAsyncActions.createPlaidLinkToken({ userId }))
+  createPlaidLinkToken: (userId) => dispatch(PlaidAsyncActions.createPlaidLinkToken({ userId })),
+  exchangePublicToken: (token, metadata) => dispatch(PlaidAsyncActions.exchangePublicToken({ token, metadata })),
+  addFinancialInstitution: () => dispatch(PlaidAsyncActions.addFinancialInstitution())
 })
 
 export default connect(

@@ -44,9 +44,7 @@ export function* fetchProfile({ payload }) {
       collectionName: ApiService.COLLECTION_NAMES.USERS,
       id,
     })
-    console.log("profile data ", profileData)
     const entity = generateEntity(id, profileData)
-    console.log("what is the entity", entity)
 
     yield put(UserActions.setUserEntities(entity))
     yield put(UserAsyncActions.fetchProfileSuccess())
@@ -106,10 +104,24 @@ export function* login({ payload }) {
   }
 }
 
+export function* updateProfile({ payload }) {
+  yield put(UserAsyncActions.updateProfileLoading())
+  try {
+
+    // TODO: fill this out when needed
+
+    yield put(UserAsyncActions.updateProfileSuccess())
+  } catch (e) {
+    const errorMsg = getErrorMsg(e)
+    yield put(UserAsyncActions.updateProfileFailure({ message: errorMsg })) 
+  }
+}
+
 export default function* rootAuthSaga() {
   yield all([
     takeLatest(UserAsyncTypes.SIGNUP, signup),
     takeLatest(UserAsyncTypes.LOGIN, login),
     takeLatest(UserAsyncTypes.FETCH_PROFILE, fetchProfile),
+    takeLatest(UserAsyncTypes.UPDATE_PROFILE, updateProfile),
   ])
 }

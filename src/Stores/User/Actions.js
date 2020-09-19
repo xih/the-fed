@@ -13,6 +13,7 @@ const { AsyncTypes, AsyncCreators } = createManyAsyncActions([
   "login",
   "signup",
   "fetchProfile",
+  'updateProfile'
 ])
 
 export {

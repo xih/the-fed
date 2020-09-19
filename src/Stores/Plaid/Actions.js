@@ -7,6 +7,8 @@ const { Types, Creators } = createActions({
 
 const { AsyncTypes, AsyncCreators } = createManyAsyncActions([
   "createPlaidLinkToken",
+  'exchangePublicToken',
+  'addFinancialInstitution'
 ])
 
 export {
