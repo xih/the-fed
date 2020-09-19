@@ -1,19 +1,14 @@
-import React, { useState } from "react"
+import React from "react"
 import { connect } from "react-redux"
 import { Form, Button, Container, Col } from "react-bootstrap"
 import { push } from "connected-react-router"
 import { useFormik } from "formik"
 import * as Yup from "yup"
 import Navbar from "../../components/Navbar"
-import { auth } from "../../Firebase/firebase.utils"
+// import { auth } from "../../Firebase/firebase.utils"
 import { UserAsyncActions, UserAsyncTypes } from "../../Stores/User/Actions"
 
 const SignupPage = ({ doSignup, push }) => {
-  const [email, setEmail] = useState("")
-  const [firstName, setfirstName] = useState("")
-  const [lastName, setlastName] = useState("")
-  const [password, setPassword] = useState("")
-
   const formik = useFormik({
     initialValues: {
       firstName: "",
