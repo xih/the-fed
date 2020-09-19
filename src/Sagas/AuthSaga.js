@@ -1,5 +1,5 @@
 import { put, call, all, takeLatest } from "redux-saga/effects"
-import { auth } from "Firebase/firebase.utils"
+import { auth } from "../Firebase/firebase.utils"
 import { get } from "lodash"
 import { push } from "connected-react-router"
 import {

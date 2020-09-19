@@ -1,0 +1,1 @@
+export const getLinkToken = (state) => state.plaid?.linkToken

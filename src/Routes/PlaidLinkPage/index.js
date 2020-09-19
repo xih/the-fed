@@ -1,30 +1,15 @@
 import React, { useCallback, useEffect, useState } from "react"
 import axios from "axios"
+import { connect } from 'react-redux'
 import { usePlaidLink } from "react-plaid-link"
+import { PlaidAsyncActions, PlaidAsyncTypes } from '../../Stores/Plaid/Actions'
+import { Button } from 'react-bootstrap'
+import { getUserId } from '../../Stores/User/Selectors'
+import { getLinkToken } from '../../Stores/Plaid/Selectors'
 
-const PlaidLinkPage = () => {
-  const [linkToken, setLinkToken] = useState("")
+const PlaidLinkPage = ({ createPlaidLinkToken, userId, linkToken }) => {
 
-  useEffect(() => {
-    async function getLinkToken() {
-      try {
-        const response = await axios.post(
-          "http://localhost:5001/flames-4cfe9/us-central1/createPlaidLinkToken",
-          {
-            // hardcoding firebase functions link
-            data: {
-              uid: "123456",
-            },
-          }
-        )
-        setLinkToken(response.data?.result?.link_token || "")
-        console.log(response)
-      } catch (e) {
-        console.log(e)
-      }
-    }
-    getLinkToken()
-  }, [])
+  console.log('linkToken', linkToken)
 
   const onSuccess = useCallback(
     (token, metadata) => console.log("onSuccess", token, metadata),
@@ -48,23 +33,40 @@ const PlaidLinkPage = () => {
     onExit,
     // –– optional parameters
     // receivedRedirectUri: props.receivedRedirectUri || null,
-    // ...
   }
 
   const { open, ready, error } = usePlaidLink(config)
 
   return (
     <div>
-      <button
-        type="button"
-        className="button"
-        onClick={() => open()}
+      {
+        ready? open() : null
+      }
+
+      <Button
+        onClick={() => createPlaidLinkToken(userId)}>
+          Create Plaid Link Token TEST
+      </Button>
+      <Button
         disabled={!ready || error}
-      >
-        Open Plaid Link
-      </button>
+        onClick={() => open()}>
+        Open plaid link
+      </Button>
     </div>
   )
 }
 
-export default PlaidLinkPage
+const mapStateToProps = state => ({
+  userId: getUserId(state),
+  errorMsg: state.plaid.errors[PlaidAsyncTypes.CREATE_PLAID_LINK_TOKEN],
+  linkToken: getLinkToken(state)
+})
+
+const mapDispatchToProps = (dispatch) => ({
+  createPlaidLinkToken: (userId) => dispatch(PlaidAsyncActions.createPlaidLinkToken({ userId }))
+})
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(PlaidLinkPage)

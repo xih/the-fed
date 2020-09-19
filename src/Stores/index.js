@@ -3,8 +3,8 @@ import { connectRouter } from "connected-react-router"
 import { createBrowserHistory } from "history"
 import rootSaga from "../Sagas"
 import configureStore from "./createStore"
-// import { reducer as UserReducer } from './User/Reducers';
 import { reducer as UserReducer } from "./User/Reducers"
+import { reducer as PlaidReducer } from "./Plaid/Reducers"
 
 export const history = createBrowserHistory()
 
@@ -13,6 +13,7 @@ export default () => {
     combineReducers({
       router: connectRouter(history),
       user: UserReducer,
+      plaid: PlaidReducer,
     })
 
   const rootReducer = (state, action) => {

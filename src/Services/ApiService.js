@@ -1,4 +1,4 @@
-/* eslint-disable no-use-before-define */
+/* eslint-disable no-underscore-dangle */
 
 import checkPropTypes from "check-prop-types"
 import { has, chunk, flatten, noop, pick } from "lodash"

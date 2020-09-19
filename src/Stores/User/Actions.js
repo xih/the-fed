@@ -1,5 +1,5 @@
 import { createActions } from "reduxsauce"
-import { createManyAsyncActions } from "../../utils.js"
+import { createManyAsyncActions } from "../../utils"
 
 const { Types, Creators } = createActions({
   setFirebaseUserData: ["userData"],

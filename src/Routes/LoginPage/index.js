@@ -1,7 +1,6 @@
 import React from "react"
 import { Form, Button, Container } from "react-bootstrap"
 import { connect } from "react-redux"
-// import { UserAsyncActions, UserAsyncTypes } from 'App/Stores/User/Actions';
 import { useFormik } from "formik"
 import * as Yup from "yup"
 import { UserAsyncActions, UserAsyncTypes } from "../../Stores/User/Actions"
